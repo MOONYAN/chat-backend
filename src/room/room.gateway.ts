@@ -22,15 +22,27 @@ export class RoomGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   @SubscribeMessage('chatToServer')
-  handleMessage(@MessageBody() dto: FromClientMessageDto) {
-    this.logger.log(`Received: ${dto.text}`)
-    this.brocast({
+  echoMessage(@MessageBody() dto: FromClientMessageDto): WsResponse<ToClientMessageDto> {
+    this.logger.log(`Received Echo: ${dto.text}`)
+    return {
+      event: 'chatToClient',
+      data: {
+        name: 'server',
+        text: `echo: ${dto.text}`
+      }
+    }
+  }
+
+  @SubscribeMessage('brocastToServer')
+  brocastMessage(@MessageBody() dto: FromClientMessageDto) {
+    this.logger.log(`Received Brocast: ${dto.text}`)
+    this.brocastToClients({
       name: dto.name,
       text: dto.text
     } as ToClientMessageDto);
   }
 
-  private brocast(dto: ToClientMessageDto) {
+  private brocastToClients(dto: ToClientMessageDto) {
     this.wws.emit('chatToClient', dto)
   }
 }
