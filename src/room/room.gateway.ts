@@ -42,7 +42,7 @@ export class RoomGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     } as ToClientMessageDto);
   }
 
-  private brocastToClients(dto: ToClientMessageDto) {
+  brocastToClients(dto: ToClientMessageDto) {
     this.wws.emit('chatToClient', dto)
   }
 }
