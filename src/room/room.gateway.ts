@@ -4,7 +4,7 @@ import { Logger } from '@nestjs/common';
 import { MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer, WsResponse } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
-@WebSocketGateway({ transports: ['websocket'] })
+@WebSocketGateway({ transports: ['websocket'], namespace: 'chat' })
 export class RoomGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 
   private logger = new Logger('Room');
@@ -16,9 +16,17 @@ export class RoomGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
   handleConnection(client: Socket, ...args: any[]) {
     this.logger.log(`Client connected: ${client.id}`);
+    this.brocastToClients({
+      name: 'server',
+      text: `Welcome to chat, ${client.handshake.query['name']} !`
+    });
   }
   handleDisconnect(client: Socket) {
     this.logger.log(`Client disconnected: ${client.id}`);
+    this.brocastToClients({
+      name: 'server',
+      text: `${client.handshake.query['name']} has left !`
+    });
   }
 
   @SubscribeMessage('chatToServer')
