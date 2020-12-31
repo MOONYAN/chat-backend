@@ -4,7 +4,7 @@ import { Logger } from '@nestjs/common';
 import { MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer, WsResponse } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
-@WebSocketGateway({ transports: ['websocket'] })
+@WebSocketGateway({ transports: ['websocket'], namespace: 'chat' })
 export class RoomGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 
   private logger = new Logger('Room');
