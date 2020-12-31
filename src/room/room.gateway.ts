@@ -16,9 +16,17 @@ export class RoomGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
   handleConnection(client: Socket, ...args: any[]) {
     this.logger.log(`Client connected: ${client.id}`);
+    this.brocastToClients({
+      name: 'server',
+      text: `Welcome to chat, ${client.handshake.query['name']} !`
+    });
   }
   handleDisconnect(client: Socket) {
     this.logger.log(`Client disconnected: ${client.id}`);
+    this.brocastToClients({
+      name: 'server',
+      text: `${client.handshake.query['name']} has left !`
+    });
   }
 
   @SubscribeMessage('chatToServer')
